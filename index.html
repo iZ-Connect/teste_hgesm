@@ -1,118 +1,603 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>HGeSM - Convênios</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background: #f8f9fa; }
-    .grupo { margin-bottom: 20px; }
-    .grupo h4 { background: #0d6efd; color: white; padding: 10px; border-radius: 8px; }
-    .card { margin-bottom: 8px; border-radius: 8px; }
-    .search-box { margin: 20px 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HGeSM - Guias de Encaminhamento e Convênios</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  /* Variáveis de Cores (Ajustadas para o Layout.jpg) */
+  :root {
+    --bg-color: #f7f9fc;
+    --shadow-light: #ffffff;
+    --shadow-dark: #d1d5db;
+    --blue-main: #0d6efd;
+    --text-color: #333;
+    --red-main: #dc3545; 
+  }
 
-    /* Estilos para o botão flutuante do WhatsApp */
-    .whatsapp-fusex {
-      position: fixed; /* Fixa o elemento na tela */
-      bottom: 20px;    /* Posição a 20px da parte inferior */
-      right: 20px;     /* Posição a 20px da parte direita */
-      background-color: #25D366; /* Cor verde do WhatsApp */
-      color: white;
-      border-radius: 50%; /* Torna o botão circular */
-      width: 60px;     /* Largura do botão */
-      height: 60px;    /* Altura do botão */
-      display: flex;   /* Permite centralizar o conteúdo */
-      flex-direction: column; /* Organiza ícone e texto em coluna */
-      justify-content: center; /* Centraliza verticalmente */
-      align-items: center;     /* Centraliza horizontalmente */
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Adiciona uma sombra */
-      text-decoration: none; /* Remove o sublinhado do link */
-      z-index: 1000;   /* Garante que o botão fique acima de outros elementos */
-      font-size: 0.8em; /* Ajusta o tamanho da fonte do texto "FuSEx" */
-      padding: 5px; /* Adiciona um preenchimento interno */
-    }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #eef2f5; 
+    padding: 20px;
+  }
 
-    .whatsapp-fusex img {
-      width: 30px; /* Ajusta o tamanho do ícone do WhatsApp */
-      height: 30px;
-      margin-bottom: 2px; /* Pequeno espaçamento entre o ícone e o texto */
-    }
-  </style>
+  /* Estilo Centralizado para o Container Principal */
+  .main-wrapper {
+    max-width: 1000px;
+    margin: 0 auto; 
+    background: var(--bg-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+  }
+
+  /* Cabeçalho do Site (Topo) - Ajuste de Alinhamento e Cores */
+  .site-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Permite que o elemento central defina a altura */
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+  }
+
+  /* Estilo Base dos Links/Botões no Cabeçalho */
+  .site-header a, .site-header .header-button { 
+    font-weight: 600;
+    color: var(--text-color); 
+    text-decoration: none;
+    cursor: pointer; 
+    /* Regras de Alinhamento: Faz o link ocupar a altura total e centraliza o texto */
+    padding: 0 15px; /* Padding horizontal mantido */
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza o texto verticalmente */
+    transition: color 0.2s, background-color 0.2s;
+  }
+
+  /* Estilo para Botão Selecionado */
+  .site-header a.active, .site-header .header-button.active {
+    color: var(--blue-main); /* Cor Ativa: Azul */
+  }
+
+  /* Título Central (Convênios HGeSM) */
+  .site-title {
+    flex-grow: 1;
+    text-align: center;
+    padding: 10px 0; 
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .site-title img { width: 60px; height: auto; margin-bottom: 5px; }
+  .site-title p { margin: 0; font-size: 1.2em; color: #6c757d; }
+
+  /* Estilo para o Texto de Convênios HGeSM (maior) */
+  .site-title h2 { 
+      font-size: 1.8em; 
+      font-weight: 700; 
+      color: inherit; 
+      margin: 5px 0 0; 
+      transition: color 0.2s;
+  }
+
+  /* Ajuste de Fonte para os botões laterais (Solicitar/Excluir) */
+  .site-header .side-button {
+      font-size: 1.5em;
+      margin: 125px 60px 0; 
+  }
+
+  /* Lista de Convênios */
+  .search-box { margin: 20px 0; }
+  .grupo h4 { background: var(--blue-main); color: white; padding: 10px; border-radius: 8px; font-size: 1.2em; margin-bottom: 15px; }
+  .card { margin-bottom: 8px; border-radius: 8px; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); }
+  .card p { margin: 2px 0; font-size: 0.9em; }
+  .card a { color: var(--red-main); text-decoration: none; font-weight: 600; }
+
+  /* Estilos para Formulários (Herdados do App Web anterior, simplificados) */
+  .form-group label { font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
+  .form-control-app {
+    padding: 10px; border-radius: 8px; border: 1px solid #ccc;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+    font-size: 0.9em; width: 100%; box-sizing: border-box;
+    margin-bottom: 15px;
+  }
+  .form-control-app:focus { border-color: var(--blue-main); box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25); outline: 0; }
+  
+  /* Layout de Formulário em Grid */
+  #initialDataForm { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 20px 0; border-top: 1px dashed #ccc; margin-top: 20px; }
+  #precCpGroup, #inputEmail { grid-column: 1 / -1; }
+  .prec-input-container { display: flex; gap: 8px; }
+  .prec-main-input { flex-grow: 1; }
+  .prec-final-select select { width: 80px; padding: 10px 4px; border-radius: 8px; border: 1px solid #ccc; }
+  .prec-not-have { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+
+  .submit-btn { width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+  .back-btn { margin-top: 10px; padding: 5px; background: none; border: none; color: var(--blue-main); font-weight: 600; cursor: pointer; }
+  
+  /* Botão de WhatsApp Flutuante */
+  .whatsapp-fusex {
+    position: fixed; bottom: 20px; right: 20px; background-color: #25D366; color: white; border-radius: 50%; width: 60px; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); text-decoration: none; z-index: 1000; font-size: 0.8em; padding: 5px;
+  }
+  .whatsapp-fusex img { width: 30px; height: 30px; margin-bottom: 2px; }
+
+  @media (max-width: 768px) {
+    #initialDataForm { grid-template-columns: 1fr; }
+    .site-header { flex-direction: column; }
+    .site-header a { margin: 5px 0; }
+    .site-title { margin: 10px 0; }
+  }
+</style>
 </head>
 <body>
-<div class="container text-center mt-3">
-  <img src="HGeSM.png" alt="Logo HGeSM" class="logo mb-2"style="width:80px; heigt: auto;">
-  <p class="slogan">Seu hospital, sua referência.</p>
-  <h2>📌 Convênios HGeSM</h2>
 
-  <input id="search" class="form-control search-box mt-3" type="text" placeholder="🔍 Pesquise por exame, clínica, endereço...">
-  <div id="lista"></div>
+<div class="main-wrapper">
+    <div class="site-header">
+        <a href="#" class="side-button" id="solicitarBtn" onclick="initiateAction('solicitar'); return false;">Solicitar GUIA</a>
+
+        <div class="site-title header-button" id="conveniosBtn" onclick="showScreen('conveniosArea'); updateHeaderColor('convenios');">
+            <img src="HGeSM.png" alt="Logo HGeSM">
+            <p>Seu hospital, sua referência.</p>
+            <h2>📌 Convênios HGeSM</h2>
+        </div>
+
+        <a href="#" class="side-button" id="excluirBtn" onclick="initiateAction('excluir'); return false;">Excluir GUIA</a>
+    </div>
+
+    <div id="mainContentArea">
+        <div id="conveniosArea">
+            <input id="search" class="form-control search-box" type="text" placeholder="🔍 Pesquise por exame, clínica, endereço...">
+            <div id="lista"></div>
+        </div>
+
+        <div id="identificationArea" style="display: none;">
+            <h3 class="text-center mb-4" id="identificationTitle"></h3>
+            <p class="text-center text-secondary">
+                Preencha seus dados para continuar a <strong id="actionText"></strong>.
+            </p>
+            
+            <div id="initialDataForm">
+                <div class="form-group">
+                    <label for="inputName">NOME COMPLETO:</label>
+                    <input type="text" id="inputName" class="form-control-app" placeholder="Seu nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputCpf">CPF:</label>
+                    <input type="text" id="inputCpf" class="form-control-app" placeholder="000.000.000-00" required>
+                </div>
+
+                <div class="form-group" id="precCpGroup">
+                    <label>PREC CP: (Se não tiver, marque "Não tenho")</label>
+                    <div class="prec-input-container">
+                        <div class="prec-main-input">
+                            <input type="text" id="inputPrecCpMain" class="form-control-app" placeholder="Número do PREC CP">
+                        </div>
+                        <div class="prec-final-select">
+                            <label>FINAL</label>
+                            <select id="selectPrecCpFinal" class="form-control-app"></select>
+                        </div>
+                    </div>
+                    <div class="prec-not-have">
+                        <input type="checkbox" id="checkPrecCpNotHave">
+                        <label for="checkPrecCpNotHave">NÃO TENHO</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail">E-mail: (Para onde enviaremos o PDF)</label>
+                    <input type="email" id="inputEmail" class="form-control-app" placeholder="seu@email.com" required>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary submit-btn" id="startActionBtn">AVANÇAR</button>
+            <button class="back-btn" onclick="showScreen('conveniosArea')">← Voltar à Lista de Convênios</button>
+        </div>
+
+        <div id="requestGuideArea" style="display: none;">
+            <h3 class="text-primary">Solicitar Guia de Encaminhamento</h3>
+            <div id="feedbackMessageRequest" class="alert mt-3" style="display: none;"></div>
+            
+            <div class="form-group">
+                <label for="clinicNameDisplay">Clínica Selecionada:</label>
+                <input type="text" id="clinicNameDisplay" class="form-control-app" placeholder="Selecione na lista ou preencha" readonly>
+                <small class="text-muted">Se você clicou em uma clínica, o nome aparecerá aqui.</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="examInput">EXAME SOLICITADO (Obrigatório):</label>
+                <input type="text" id="examInput" class="form-control-app" placeholder="Ex: Ressonância Magnética de Joelho" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="medicalOrderFile">ANEXAR PEDIDO MÉDICO (Obrigatório):</label>
+                <input type="file" id="medicalOrderFile" class="form-control-app" accept="image/*,.pdf" required>
+                <small class="text-muted">Apenas imagens (JPG, PNG) ou PDF.</small>
+            </div>
+
+            <button class="btn btn-primary submit-btn" id="submitRequestBtn">SOLICITAR GUIA</button>
+            <button class="back-btn" onclick="showScreen('conveniosArea')">← Voltar à Lista de Convênios</button>
+        </div>
+
+        <div id="deleteGuideArea" style="display: none;">
+            <h3 class="text-danger">Exclusão de Guia</h3>
+            <div id="feedbackMessageDelete" class="alert mt-3" style="display: none;"></div>
+            
+            <div class="form-group">
+                <label for="guideNumberInput">NÚMERO DA GUIA PARA EXCLUSÃO:</label>
+                <input type="text" id="guideNumberInput" class="form-control-app" placeholder="Ex: 2024.12345" required>
+            </div>
+            
+            <button class="btn btn-danger submit-btn" id="submitDeleteBtn">SOLICITAR EXCLUSÃO</button>
+            <button class="back-btn" onclick="showScreen('conveniosArea')">← Voltar à Lista de Convênios</button>
+        </div>
+    </div>
 </div>
 
-<script>
-const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQiLAhk5UOYqyWcABYui1vxCAlTlDMbkJ5c-o3wl03A73Vy9HcKV9w7p8EsOtPMU1RKBA1tF_arWD88/pub?output=csv';
-
-fetch(url)
-  .then(response => response.text())
-  .then(csv => {
-    const linhas = csv.trim().split(/\r?\n/).map(l => l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
-    linhas.shift(); // remove cabeçalho
-    const data = linhas.map(l => ({
-      especialidade: l[0]?.replace(/"/g, ''),
-      clinica: l[1]?.replace(/"/g, ''),
-      endereco: l[2]?.replace(/"/g, ''),
-      contato: l[3]?.replace(/"/g, '')
-    }));
-    render(data);
-  })
-  .catch(err => {
-    document.getElementById('lista').innerHTML = '<p class="text-danger">Erro ao carregar os dados.</p>';
-  });
-
-function render(data) {
-  const container = document.getElementById('lista');
-  container.innerHTML = '';
-
-  const grupos = {};
-  data.forEach(item => {
-    if (!item.especialidade) return;
-    const esp = item.especialidade;
-    if (!grupos[esp]) grupos[esp] = [];
-    grupos[esp].push(item);
-  });
-
-  Object.keys(grupos).sort().forEach(esp => {
-    const divGrupo = document.createElement('div');
-    divGrupo.className = 'grupo';
-    divGrupo.innerHTML = `<h4>🩺 ${esp}</h4>`;
-
-    grupos[esp].forEach(item => {
-      const telefone = item.contato ? `<a href='https://wa.me/55${item.contato.replace(/\D/g,'')}' target='_blank'>📞 ${item.contato}</a>` : '';
-      divGrupo.innerHTML += `
-        <div class="card p-3 shadow-sm">
-          <p><strong>Clínica:</strong> ${item.clinica}</p>
-          <p><strong>Endereço:</strong> ${item.endereco}</p>
-          <p>${telefone}</p>
-        </div>`;
-    });
-
-    container.appendChild(divGrupo);
-  });
-
-  document.getElementById('search').addEventListener('keyup', function() {
-    const q = this.value.toLowerCase();
-    container.querySelectorAll('.grupo').forEach(grupo => {
-      grupo.style.display = grupo.innerText.toLowerCase().includes(q) ? '' : 'none';
-    });
-  });
-}
-</script>
-  <a href="https://wa.me/5532202408" target="_blank" class="whatsapp-fusex">
-  <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" alt="WhatsApp">
-  <span><strong>FuSEx</strong></span>
+<a href="https://wa.me/5532202408" target="_blank" class="whatsapp-fusex">
+    <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png" alt="WhatsApp">
+    <span><strong>FuSEx</strong></span>
 </a>
+
+<script>
+// =================================================================================
+// !!! 1. ATENÇÃO: SUBSTITUA PELA SUA URL DE IMPLANTAÇÃO DO GOOGLE APPS SCRIPT (FINAL /exec) !!!
+// =================================================================================
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQGvBA9BMJSKFnl4_xeKPKd7lf90uw-MXxqjgkI2fvDKYpOZQ21EJtvKk_c6npJexnWA/exec"; 
+// =================================================================================
+// !!! 2. ATENÇÃO: SUBSTITUA PELA SUA URL DO CSV PÚBLICO DE CONVÊNIOS !!!
+// =================================================================================
+const CONVENIOS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRpc5O74wa2ABuPIMlRcMOK7rkBmzWKILofTkiBi45ytpvFK9gJfns1KptwHdfdoZsENL6EAv9GOYWM/pub?gid=0&single=true&output=csv';
+// =================================================================================
+
+let currentAction = null; 
+let patientData = {}; 
+let allClinics = []; 
+
+// Variáveis dos botões do cabeçalho
+const solicitarBtn = document.getElementById('solicitarBtn');
+const excluirBtn = document.getElementById('excluirBtn');
+const conveniosBtn = document.getElementById('conveniosBtn');
+const conveniosTitle = conveniosBtn.querySelector('h2');
+
+
+// Variáveis de Elementos
+const conveniosArea = document.getElementById('conveniosArea');
+const identificationArea = document.getElementById('identificationArea');
+const requestGuideArea = document.getElementById('requestGuideArea');
+const deleteGuideArea = document.getElementById('deleteGuideArea');
+const identificationTitle = document.getElementById('identificationTitle');
+const actionText = document.getElementById('actionText');
+const startActionBtn = document.getElementById('startActionBtn');
+const clinicNameDisplay = document.getElementById('clinicNameDisplay');
+const submitRequestBtn = document.getElementById('submitRequestBtn');
+const submitDeleteBtn = document.getElementById('submitDeleteBtn');
+const medicalOrderFile = document.getElementById('medicalOrderFile'); // NOVO: Campo de anexo
+
+// Variáveis de Input
+const inputName = document.getElementById('inputName');
+const inputCpf = document.getElementById('inputCpf');
+const inputEmail = document.getElementById('inputEmail');
+const inputPrecCpMain = document.getElementById('inputPrecCpMain');
+const selectPrecCpFinal = document.getElementById('selectPrecCpFinal');
+const checkPrecCpNotHave = document.getElementById('checkPrecCpNotHave');
+const examInput = document.getElementById('examInput');
+const guideNumberInput = document.getElementById('guideNumberInput');
+
+// ----------------------------------------------------
+// Funções Auxiliares de UI/Navegação
+// ----------------------------------------------------
+
+function generatePrecCpOptions() {
+    for (let i = 0; i <= 50; i++) {
+        const value = i.toString().padStart(2, '0');
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        selectPrecCpFinal.appendChild(option);
+    }
+}
+checkPrecCpNotHave.addEventListener('change', () => {
+    const disabled = checkPrecCpNotHave.checked;
+    inputPrecCpMain.disabled = disabled;
+    selectPrecCpFinal.disabled = disabled;
+    
+    if (disabled) {
+        inputPrecCpMain.value = '';
+        selectPrecCpFinal.value = '00';
+    }
+});
+
+
+// Função para mudar a cor do botão ativo no cabeçalho
+function updateHeaderColor(activeElementId) {
+    solicitarBtn.classList.remove('active');
+    excluirBtn.classList.remove('active');
+    conveniosTitle.style.color = 'inherit'; 
+
+    if (activeElementId === 'solicitar') {
+        solicitarBtn.classList.add('active');
+    } else if (activeElementId === 'excluir') {
+        excluirBtn.classList.add('active');
+    } else if (activeElementId === 'convenios') {
+        conveniosTitle.style.color = 'var(--blue-main)';
+    }
+}
+
+
+function showScreen(screenId) {
+    conveniosArea.style.display = 'none';
+    identificationArea.style.display = 'none';
+    requestGuideArea.style.display = 'none';
+    deleteGuideArea.style.display = 'none';
+
+    const targetElement = document.getElementById(screenId);
+    if (targetElement) {
+        targetElement.style.display = 'block';
+    }
+    
+    // Limpa o feedback ao mudar de tela
+    document.getElementById('feedbackMessageRequest').style.display = 'none';
+    document.getElementById('feedbackMessageDelete').style.display = 'none';
+
+    if (screenId === 'conveniosArea') {
+        updateHeaderColor('convenios');
+    } else if (screenId === 'identificationArea') {
+        updateHeaderColor(currentAction); 
+    } else if (screenId === 'requestGuideArea') {
+        updateHeaderColor('solicitar'); 
+    } else if (screenId === 'deleteGuideArea') {
+        updateHeaderColor('excluir'); 
+    }
+}
+
+function initiateAction(action) {
+    currentAction = action;
+    const title = action === 'solicitar' ? 'Solicitação de Guia' : 'Exclusão de Guia';
+    const text = action === 'solicitar' ? 'Solicitação de Guia' : 'Exclusão de Guia';
+    
+    identificationTitle.textContent = title;
+    actionText.textContent = text;
+    
+    updateHeaderColor(action); 
+    
+    showScreen('identificationArea');
+}
+
+function displayFeedback(elementId, message, type) {
+    const element = document.getElementById(elementId);
+    element.textContent = message;
+    element.className = `alert alert-${type === 'success' ? 'success' : 'danger'} mt-3`;
+    element.style.display = 'block';
+    setTimeout(() => { element.style.display = 'none'; }, 5000);
+}
+
+
+// ----------------------------------------------------
+// Lógica de Convênios
+// ----------------------------------------------------
+
+function fetchConvenios() {
+    fetch(CONVENIOS_CSV_URL)
+        .then(response => response.text())
+        .then(csv => {
+            const linhas = csv.trim().split(/\r?\n/).map(l => l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
+            linhas.shift(); 
+            allClinics = linhas.map(l => ({
+                especialidade: l[0]?.replace(/"/g, ''),
+                clinica: l[1]?.replace(/"/g, ''),
+                endereco: l[2]?.replace(/"/g, ''),
+                contato: l[3]?.replace(/"/g, '')
+            }));
+            renderConvenios(allClinics);
+        })
+        .catch(err => {
+            document.getElementById('lista').innerHTML = '<p class="text-danger text-center mt-4">Erro ao carregar os dados dos convênios. Verifique o link CONVENIOS_CSV_URL ou a permissão de acesso ao CSV.</p>';
+        });
+}
+
+function renderConvenios(data) {
+    const container = document.getElementById('lista');
+    container.innerHTML = '';
+
+    const grupos = {};
+    data.forEach(item => {
+        if (!item.especialidade) return;
+        const esp = item.especialidade;
+        if (!grupos[esp]) grupos[esp] = [];
+        grupos[esp].push(item);
+    });
+
+    Object.keys(grupos).sort().forEach(esp => {
+        const divGrupo = document.createElement('div');
+        divGrupo.className = 'grupo';
+        divGrupo.innerHTML = `<h4>🩺 ${esp}</h4>`;
+
+        grupos[esp].forEach(item => {
+            const telefoneHref = item.contato ? `https://wa.me/55${item.contato.replace(/\D/g,'')}` : '#';
+            const telefoneText = item.contato ? `📞 ${item.contato}` : 'Telefone Não Informado';
+            divGrupo.innerHTML += `
+                <div class="card p-3 shadow-sm" onclick="selectClinicForRequest('${item.clinica}')" style="cursor:pointer;">
+                    <p><strong>Clínica:</strong> ${item.clinica || 'Clínica sem Nome'}</p>
+                    <p><strong>Endereço:</strong> ${item.endereco || 'Não Informado'}</p>
+                    <p><a href='${telefoneHref}' target='_blank'>${telefoneText}</a></p>
+                </div>`;
+        });
+
+        container.appendChild(divGrupo);
+    });
+
+    document.getElementById('search').addEventListener('keyup', function() {
+        const q = this.value.toLowerCase();
+        container.querySelectorAll('.grupo').forEach(grupo => {
+            grupo.style.display = grupo.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+        });
+    });
+}
+
+function selectClinicForRequest(clinicName) {
+    clinicNameDisplay.value = clinicName;
+    initiateAction('solicitar');
+}
+
+// ----------------------------------------------------
+// Lógica de Validação e Transição do Formulário de Identificação
+// ----------------------------------------------------
+
+startActionBtn.addEventListener('click', () => {
+    // 1. Validação de campos obrigatórios
+    const name = inputName.value.trim();
+    const cpf = inputCpf.value.trim();
+    const email = inputEmail.value.trim();
+    
+    if (name === '' || cpf === '' || email === '') {
+        alert("Por favor, preencha o Nome, CPF e E-mail para avançar.");
+        return; 
+    }
+
+    // 2. Coleta e formatação dos dados
+    const precCpMain = inputPrecCpMain.value.trim();
+    
+    let finalPrecCpValue;
+    if (checkPrecCpNotHave.checked) {
+        finalPrecCpValue = 'Não tenho';
+    } else if (precCpMain === '') {
+        finalPrecCpValue = 'Não informado';
+    } else {
+        finalPrecCpValue = `${precCpMain}-${selectPrecCpFinal.value}`;
+    }
+    
+    patientData = {
+        name: name,
+        cpf: cpf,
+        prec_cp: finalPrecCpValue,
+        email: email
+    };
+
+    // 3. Transiciona para a tela de ação específica
+    if (currentAction === 'solicitar') {
+        showScreen('requestGuideArea');
+    } else if (currentAction === 'excluir') {
+        showScreen('deleteGuideArea');
+    }
+});
+
+
+// ----------------------------------------------------
+// Lógica de Submissão para Google Apps Script (COM ANEXO)
+// ----------------------------------------------------
+
+// 1. Submissão da Solicitação de Guia
+submitRequestBtn.addEventListener('click', async () => {
+    const examName = examInput.value.trim();
+    const clinicName = clinicNameDisplay.value.trim();
+    const file = medicalOrderFile.files[0]; // Pega o primeiro arquivo selecionado
+
+    if (clinicName === '' || examName === '') {
+        alert("Por favor, preencha o nome da clínica e o exame solicitado.");
+        return;
+    }
+    if (!file) { // Verifica se um arquivo foi selecionado
+        alert("Por favor, anexe o pedido médico.");
+        return;
+    }
+
+    // Usamos FormData para enviar o arquivo junto com os outros dados
+    const formData = new FormData();
+    formData.append('action', 'solicitar_guia'); // Ação para o Apps Script
+    formData.append('name', patientData.name);
+    formData.append('cpf', patientData.cpf);
+    formData.append('prec_cp', patientData.prec_cp);
+    formData.append('email', patientData.email);
+    formData.append('clinicName', clinicName);
+    formData.append('examName', examName);
+    formData.append('medicalOrderFile', file); // Anexa o arquivo!
+
+    submitRequestBtn.disabled = true;
+    submitRequestBtn.textContent = 'ENVIANDO SOLICITAÇÃO E ANEXO...';
+
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            // NÃO inclua Content-Type para FormData
+            body: formData // Envia o FormData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            displayFeedback('feedbackMessageRequest', '✅ ' + result.message + ' Você será notificado por e-mail.', 'success');
+            examInput.value = ''; 
+            medicalOrderFile.value = ''; // Limpa o input do arquivo
+        } else {
+            displayFeedback('feedbackMessageRequest', '❌ Erro: ' + result.message, 'error');
+        }
+    } catch (error) {
+        displayFeedback('feedbackMessageRequest', '❌ Erro de conexão com o servidor. Verifique o APPS_SCRIPT_URL ou sua rede.', 'error');
+        console.error("Erro no envio da solicitação:", error);
+    } finally {
+        submitRequestBtn.textContent = 'SOLICITAR GUIA';
+        submitRequestBtn.disabled = false;
+    }
+});
+
+// 2. Submissão da Exclusão de Guia (Não requer alteração)
+submitDeleteBtn.addEventListener('click', async () => {
+    const guideNumber = guideNumberInput.value.trim();
+    
+    if (guideNumber === '') {
+        alert("Por favor, preencha o número da guia para exclusão.");
+        return;
+    }
+
+    const payload = {
+        action: 'excluir_guia',
+        ...patientData, 
+        guideNumber: guideNumber
+    };
+
+    submitDeleteBtn.disabled = true;
+    submitDeleteBtn.textContent = 'ENVIANDO EXCLUSÃO...';
+
+    try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            contentType: 'application/json',
+            body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            displayFeedback('feedbackMessageDelete', '✅ ' + result.message, 'success');
+            guideNumberInput.value = ''; 
+        } else {
+            displayFeedback('feedbackMessageDelete', '❌ Erro: ' + result.message, 'error');
+        }
+    } catch (error) {
+        displayFeedback('feedbackMessageDelete', '❌ Erro de conexão com o servidor. Verifique o APPS_SCRIPT_URL ou sua rede.', 'error');
+    } finally {
+        submitDeleteBtn.textContent = 'SOLICITAR EXCLUSÃO';
+        submitDeleteBtn.disabled = false;
+    }
+});
+
+
+// ----------------------------------------------------
+// Inicialização
+// ----------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+    generatePrecCpOptions();
+    fetchConvenios();
+    showScreen('conveniosArea'); 
+    updateHeaderColor('convenios'); 
+});
+</script>
 
 </body>
 </html>
