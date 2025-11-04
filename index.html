@@ -19,7 +19,7 @@
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #eef2f5; 
-    padding: 0; /* Removido padding fixo do body para melhor controle mobile */
+    padding: 0; 
   }
 
   /* Estilo Centralizado para o Container Principal */
@@ -32,7 +32,7 @@
     padding: 30px;
   }
 
-  /* Cabeçalho do Site (Topo) - Ajuste de Alinhamento e Cores */
+  /* Cabeçalho do Site (Topo) */
   .site-header {
     display: flex;
     justify-content: space-between;
@@ -85,10 +85,9 @@
       transition: color 0.2s;
   }
 
-  /* Ajuste de Fonte para os botões laterais (Solicitar/Excluir) - CORREÇÃO DE MARGEM */
+  /* Ajuste de Fonte para os botões laterais (Solicitar/Excluir) */
   .site-header .side-button {
-      font-size: 1.5em; 
-
+      font-size: 1.0em; 
   }
 
   /* Lista de Convênios */
@@ -98,7 +97,7 @@
   .card p { margin: 2px 0; font-size: 0.9em; }
   .card a { color: var(--red-main); text-decoration: none; font-weight: 600; }
 
-  /* Estilos para Formulários (Herdados) */
+  /* Estilos para Formulários */
   .form-group label { font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
   .form-control-app {
     padding: 10px; border-radius: 8px; border: 1px solid #ccc;
@@ -127,28 +126,24 @@
 
   /* CORREÇÃO DE RESPONSIVIDADE (MOBILE) */
   @media (max-width: 768px) {
-    /* Ajuste Geral para Celular */
     .main-wrapper { 
         padding: 15px; 
         width: 100%; 
         box-shadow: none; 
     }
     
-    /* Cabeçalho: Passa para layout empilhado */
     .site-header { 
         flex-direction: column; 
         align-items: center; 
         padding-bottom: 10px;
     }
     
-    /* Centraliza o Título e Logo */
     .site-title { 
         order: -1; 
         margin-bottom: 10px;
         padding: 5px 0;
     }
 
-    /* Botões laterais (Solicitar/Excluir) - Passam a ser blocos verticais */
     .site-header a { 
         width: 80%; 
         margin: 5px 0; 
@@ -158,14 +153,9 @@
         height: auto; 
     }
     
-    /* Campos de formulário em uma coluna */
-    #initialDataForm { 
-        grid-template-columns: 1fr;
-    }
-
     small.text-muted {
-    display: block; /* Garante que a margem funcione */
-    margin-bottom: 15px; /* Ajuste o valor para o espaço desejado */
+        display: block; 
+        margin-bottom: 15px; 
     }
   }
 </style>
@@ -241,7 +231,12 @@
                 <label for="clinicNameDisplay">Clínica Selecionada:</label>
                 <input type="text" id="clinicNameDisplay" class="form-control-app" placeholder="Selecione a clínica na Lista de Convênios" readonly>
                 <small class="text-muted">NÃO SE PREOCUPE, SEUS DADOS NÃO SERÃO APAGADOS! Volte para a Lista de Convênios e selecione a clínica.</small>
-                <br>
+            </div>
+
+            <div class="form-group">
+                <label for="scheduledDateInput">DATA AGENDADA DO EXAME (Obrigatório):</label>
+                <input type="date" id="scheduledDateInput" class="form-control-app" required>
+                <small class="text-muted">A data em que você agendou o exame com a clínica.</small>
             </div>
             
             <div class="form-group">
@@ -286,7 +281,6 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQGvBA9BMJSKFnl4_xeKPKd7lf90uw-MXxqjgkI2fvDKYpOZQ21EJtvKk_c6npJexnWA/exec"; 
 // =================================================================================
 // !!! 2. ATENÇÃO: SUBSTITUA PELA SUA URL DO CSV PÚBLICO DE CONVÊNIOS !!!
-// ** DICA: Deve ser o link que termina em /pub?output=csv **
 // =================================================================================
 const CONVENIOS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRpc5O74wa2ABuPlMlRcMOKr7kBmzWKILofTkiB4i5ytpvFK9gJfns1KptwHdfdoZsENL6EAv9G0YWM/pub?output=csv'; // URL Corrigida para CSV
 // =================================================================================
@@ -321,6 +315,7 @@ const selectPrecCpFinal = document.getElementById('selectPrecCpFinal');
 const checkPrecCpNotHave = document.getElementById('checkPrecCpNotHave');
 const examInput = document.getElementById('examInput');
 const guideNumberInput = document.getElementById('guideNumberInput');
+const scheduledDateInput = document.getElementById('scheduledDateInput'); // Adicionada a variável do novo campo
 
 // ----------------------------------------------------
 // Funções Auxiliares de UI/Navegação
@@ -523,10 +518,12 @@ startActionBtn.addEventListener('click', () => {
 submitRequestBtn.addEventListener('click', async () => {
     const examName = examInput.value.trim();
     const clinicName = clinicNameDisplay.value.trim();
+    const scheduledDate = scheduledDateInput.value; // Coleta a data do calendário
     const file = medicalOrderFile.files[0]; 
 
-    if (clinicName === '' || examName === '') {
-        alert("Por favor, preencha o nome da clínica e o exame solicitado.");
+    // Adiciona a validação para o novo campo de data
+    if (clinicName === '' || scheduledDate === '' || examName === '') { 
+        alert("Por favor, preencha a Clínica, a Data Agendada e o Exame Solicitado.");
         return;
     }
     if (!file) { 
@@ -534,6 +531,7 @@ submitRequestBtn.addEventListener('click', async () => {
         return;
     }
 
+    // Usamos FormData para enviar o arquivo junto com os outros dados
     const formData = new FormData();
     formData.append('action', 'solicitar_guia'); 
     formData.append('name', patientData.name);
@@ -541,6 +539,7 @@ submitRequestBtn.addEventListener('click', async () => {
     formData.append('prec_cp', patientData.prec_cp);
     formData.append('email', patientData.email);
     formData.append('clinicName', clinicName);
+    formData.append('scheduledDate', scheduledDate); // Envia a data agendada
     formData.append('examName', examName);
     formData.append('medicalOrderFile', file); 
 
@@ -559,6 +558,7 @@ submitRequestBtn.addEventListener('click', async () => {
             displayFeedback('feedbackMessageRequest', '✅ ' + result.message + ' Você será notificado por e-mail.', 'success');
             examInput.value = ''; 
             medicalOrderFile.value = ''; 
+            scheduledDateInput.value = ''; // Limpa o campo de data
         } else {
             displayFeedback('feedbackMessageRequest', '❌ Erro: ' + result.message, 'error');
         }
