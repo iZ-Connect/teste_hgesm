@@ -6,7 +6,7 @@
 <title>HGeSM - Guias de Encaminhamento e Convênios</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  /* Variáveis de Cores (Ajustadas para o Layout.jpg) */
+  /* Variáveis de Cores */
   :root {
     --bg-color: #f7f9fc;
     --shadow-light: #ffffff;
@@ -19,7 +19,7 @@
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #eef2f5; 
-    padding: 20px;
+    padding: 0; /* Removido padding fixo do body para melhor controle mobile */
   }
 
   /* Estilo Centralizado para o Container Principal */
@@ -36,7 +36,7 @@
   .site-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; /* Permite que o elemento central defina a altura */
+    align-items: flex-start; 
     text-align: center;
     margin-bottom: 25px;
     border-bottom: 1px solid #e9ecef;
@@ -49,18 +49,17 @@
     color: var(--text-color); 
     text-decoration: none;
     cursor: pointer; 
-    /* Regras de Alinhamento: Faz o link ocupar a altura total e centraliza o texto */
-    padding: 0 15px; /* Padding horizontal mantido */
+    padding: 0 15px; 
     height: 100%; 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centraliza o texto verticalmente */
+    justify-content: center; 
     transition: color 0.2s, background-color 0.2s;
   }
 
   /* Estilo para Botão Selecionado */
   .site-header a.active, .site-header .header-button.active {
-    color: var(--blue-main); /* Cor Ativa: Azul */
+    color: var(--blue-main); 
   }
 
   /* Título Central (Convênios HGeSM) */
@@ -68,7 +67,6 @@
     flex-grow: 1;
     text-align: center;
     padding: 10px 0; 
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -76,7 +74,7 @@
   }
 
   .site-title img { width: 60px; height: auto; margin-bottom: 5px; }
-  .site-title p { margin: 0; font-size: 1.2em; color: #6c757d; }
+  .site-title p { margin: 0; font-size: 0.8em; color: #6c757d; }
 
   /* Estilo para o Texto de Convênios HGeSM (maior) */
   .site-title h2 { 
@@ -87,10 +85,10 @@
       transition: color 0.2s;
   }
 
-  /* Ajuste de Fonte para os botões laterais (Solicitar/Excluir) */
+  /* Ajuste de Fonte para os botões laterais (Solicitar/Excluir) - CORREÇÃO DE MARGEM */
   .site-header .side-button {
-      font-size: 1.5em;
-      margin: 125px 60px 0; 
+      font-size: 1.0em; 
+      /* A margem fixa de 125px FOI REMOVIDA pelo height: 100% no CSS anterior, o que está correto! */
   }
 
   /* Lista de Convênios */
@@ -100,7 +98,7 @@
   .card p { margin: 2px 0; font-size: 0.9em; }
   .card a { color: var(--red-main); text-decoration: none; font-weight: 600; }
 
-  /* Estilos para Formulários (Herdados do App Web anterior, simplificados) */
+  /* Estilos para Formulários (Herdados) */
   .form-group label { font-size: 0.85em; font-weight: 600; color: #555; margin-bottom: 4px; }
   .form-control-app {
     padding: 10px; border-radius: 8px; border: 1px solid #ccc;
@@ -127,11 +125,43 @@
   }
   .whatsapp-fusex img { width: 30px; height: 30px; margin-bottom: 2px; }
 
+  /* CORREÇÃO DE RESPONSIVIDADE (MOBILE) */
   @media (max-width: 768px) {
-    #initialDataForm { grid-template-columns: 1fr; }
-    .site-header { flex-direction: column; }
-    .site-header a { margin: 5px 0; }
-    .site-title { margin: 10px 0; }
+    /* Ajuste Geral para Celular */
+    .main-wrapper { 
+        padding: 15px; 
+        width: 100%; 
+        box-shadow: none; 
+    }
+    
+    /* Cabeçalho: Passa para layout empilhado */
+    .site-header { 
+        flex-direction: column; 
+        align-items: center; 
+        padding-bottom: 10px;
+    }
+    
+    /* Centraliza o Título e Logo */
+    .site-title { 
+        order: -1; 
+        margin-bottom: 10px;
+        padding: 5px 0;
+    }
+
+    /* Botões laterais (Solicitar/Excluir) - Passam a ser blocos verticais */
+    .site-header a { 
+        width: 80%; 
+        margin: 5px 0; 
+        padding: 8px 15px; 
+        font-size: 1.1em; 
+        text-align: center;
+        height: auto; 
+    }
+    
+    /* Campos de formulário em uma coluna */
+    #initialDataForm { 
+        grid-template-columns: 1fr;
+    }
   }
 </style>
 </head>
@@ -247,25 +277,24 @@
 // =================================================================================
 // !!! 1. ATENÇÃO: SUBSTITUA PELA SUA URL DE IMPLANTAÇÃO DO GOOGLE APPS SCRIPT (FINAL /exec) !!!
 // =================================================================================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQGvBA9BMJSKFnl4_xeKPKd7lf90uw-MXxqjgkI2fvDKYpOZQ21EJtvKk_c6npJexnWA/exec"; 
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQGvBA9BMJSKFnl4_xeKPKd7lf90uw-MXxqjgkI2fvDKYpOZQ21EJtvKk_c6npJexnWA/exec"; 
 // =================================================================================
 // !!! 2. ATENÇÃO: SUBSTITUA PELA SUA URL DO CSV PÚBLICO DE CONVÊNIOS !!!
+// ** DICA: Deve ser o link que termina em /pub?output=csv **
 // =================================================================================
-const CONVENIOS_CSV_URL = 'https://script.google.com/macros/s/AKfycbwTZkSTBTXm3t80pgT-Q5_fX1OZF6WliN6tuIImsZNFvHjyL28teAo1IUxRoF0Gt9V7/exec';
+const CONVENIOS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRpc5O74wa2ABuPlMlRcMOKr7kBmzWKILofTkiB4i5ytpvFK9gJfns1KptwHdfdoZsENL6EAv9G0YWM/pub?output=csv'; // URL Corrigida para CSV
 // =================================================================================
 
-let currentAction = null; 
-let patientData = {}; 
-let allClinics = []; 
+let currentAction = null; 
+let patientData = {}; 
+let allClinics = []; 
 
-// Variáveis dos botões do cabeçalho
 const solicitarBtn = document.getElementById('solicitarBtn');
 const excluirBtn = document.getElementById('excluirBtn');
 const conveniosBtn = document.getElementById('conveniosBtn');
 const conveniosTitle = conveniosBtn.querySelector('h2');
 
 
-// Variáveis de Elementos
 const conveniosArea = document.getElementById('conveniosArea');
 const identificationArea = document.getElementById('identificationArea');
 const requestGuideArea = document.getElementById('requestGuideArea');
@@ -276,9 +305,8 @@ const startActionBtn = document.getElementById('startActionBtn');
 const clinicNameDisplay = document.getElementById('clinicNameDisplay');
 const submitRequestBtn = document.getElementById('submitRequestBtn');
 const submitDeleteBtn = document.getElementById('submitDeleteBtn');
-const medicalOrderFile = document.getElementById('medicalOrderFile'); // NOVO: Campo de anexo
+const medicalOrderFile = document.getElementById('medicalOrderFile'); 
 
-// Variáveis de Input
 const inputName = document.getElementById('inputName');
 const inputCpf = document.getElementById('inputCpf');
 const inputEmail = document.getElementById('inputEmail');
@@ -313,7 +341,6 @@ checkPrecCpNotHave.addEventListener('change', () => {
 });
 
 
-// Função para mudar a cor do botão ativo no cabeçalho
 function updateHeaderColor(activeElementId) {
     solicitarBtn.classList.remove('active');
     excluirBtn.classList.remove('active');
@@ -340,7 +367,6 @@ function showScreen(screenId) {
         targetElement.style.display = 'block';
     }
     
-    // Limpa o feedback ao mudar de tela
     document.getElementById('feedbackMessageRequest').style.display = 'none';
     document.getElementById('feedbackMessageDelete').style.display = 'none';
 
@@ -382,11 +408,15 @@ function displayFeedback(elementId, message, type) {
 // ----------------------------------------------------
 
 function fetchConvenios() {
-    fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(CONVENIOS_CSV_URL)}`)
+    // Tenta usar um proxy para evitar erro de CORS (Acesso negado)
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(CONVENIOS_CSV_URL)}`;
+    
+    // NOTA: Se o proxy falhar, tente usar apenas CONVENIOS_CSV_URL
+    fetch(proxyUrl)
         .then(response => response.text())
         .then(csv => {
             const linhas = csv.trim().split(/\r?\n/).map(l => l.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/));
-            linhas.shift();
+            linhas.shift(); 
             allClinics = linhas.map(l => ({
                 especialidade: l[0]?.replace(/"/g, ''),
                 clinica: l[1]?.replace(/"/g, ''),
@@ -396,10 +426,9 @@ function fetchConvenios() {
             renderConvenios(allClinics);
         })
         .catch(err => {
-            document.getElementById('lista').innerHTML = '<p class="text-danger text-center mt-4">Erro ao carregar os dados dos convênios (CORS). Tente novamente mais tarde.</p>';
+            document.getElementById('lista').innerHTML = '<p class="text-danger text-center mt-4">Erro ao carregar os dados dos convênios. Verifique o link CONVENIOS_CSV_URL ou a permissão de acesso ao CSV.</p>';
         });
 }
-
 
 function renderConvenios(data) {
     const container = document.getElementById('lista');
@@ -446,11 +475,10 @@ function selectClinicForRequest(clinicName) {
 }
 
 // ----------------------------------------------------
-// Lógica de Validação e Transição do Formulário de Identificação
+// Lógica de Validação e Submissão
 // ----------------------------------------------------
 
 startActionBtn.addEventListener('click', () => {
-    // 1. Validação de campos obrigatórios
     const name = inputName.value.trim();
     const cpf = inputCpf.value.trim();
     const email = inputEmail.value.trim();
@@ -460,7 +488,6 @@ startActionBtn.addEventListener('click', () => {
         return; 
     }
 
-    // 2. Coleta e formatação dos dados
     const precCpMain = inputPrecCpMain.value.trim();
     
     let finalPrecCpValue;
@@ -479,7 +506,6 @@ startActionBtn.addEventListener('click', () => {
         email: email
     };
 
-    // 3. Transiciona para a tela de ação específica
     if (currentAction === 'solicitar') {
         showScreen('requestGuideArea');
     } else if (currentAction === 'excluir') {
@@ -488,35 +514,29 @@ startActionBtn.addEventListener('click', () => {
 });
 
 
-// ----------------------------------------------------
-// Lógica de Submissão para Google Apps Script (COM ANEXO)
-// ----------------------------------------------------
-
-// 1. Submissão da Solicitação de Guia
 submitRequestBtn.addEventListener('click', async () => {
     const examName = examInput.value.trim();
     const clinicName = clinicNameDisplay.value.trim();
-    const file = medicalOrderFile.files[0]; // Pega o primeiro arquivo selecionado
+    const file = medicalOrderFile.files[0]; 
 
     if (clinicName === '' || examName === '') {
         alert("Por favor, preencha o nome da clínica e o exame solicitado.");
         return;
     }
-    if (!file) { // Verifica se um arquivo foi selecionado
+    if (!file) { 
         alert("Por favor, anexe o pedido médico.");
         return;
     }
 
-    // Usamos FormData para enviar o arquivo junto com os outros dados
     const formData = new FormData();
-    formData.append('action', 'solicitar_guia'); // Ação para o Apps Script
+    formData.append('action', 'solicitar_guia'); 
     formData.append('name', patientData.name);
     formData.append('cpf', patientData.cpf);
     formData.append('prec_cp', patientData.prec_cp);
     formData.append('email', patientData.email);
     formData.append('clinicName', clinicName);
     formData.append('examName', examName);
-    formData.append('medicalOrderFile', file); // Anexa o arquivo!
+    formData.append('medicalOrderFile', file); 
 
     submitRequestBtn.disabled = true;
     submitRequestBtn.textContent = 'ENVIANDO SOLICITAÇÃO E ANEXO...';
@@ -524,8 +544,7 @@ submitRequestBtn.addEventListener('click', async () => {
     try {
         const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            // NÃO inclua Content-Type para FormData
-            body: formData // Envia o FormData
+            body: formData 
         });
         
         const result = await response.json();
@@ -533,7 +552,7 @@ submitRequestBtn.addEventListener('click', async () => {
         if (result.success) {
             displayFeedback('feedbackMessageRequest', '✅ ' + result.message + ' Você será notificado por e-mail.', 'success');
             examInput.value = ''; 
-            medicalOrderFile.value = ''; // Limpa o input do arquivo
+            medicalOrderFile.value = ''; 
         } else {
             displayFeedback('feedbackMessageRequest', '❌ Erro: ' + result.message, 'error');
         }
@@ -546,7 +565,6 @@ submitRequestBtn.addEventListener('click', async () => {
     }
 });
 
-// 2. Submissão da Exclusão de Guia (Não requer alteração)
 submitDeleteBtn.addEventListener('click', async () => {
     const guideNumber = guideNumberInput.value.trim();
     
